@@ -32,7 +32,7 @@ def scan(ip):
     #later builds will take the whole tuple to filter out unopened ports, dropping the [0]
     answered_list = scapy.srp(broadcast_ether_arp_req_frame, timeout=1, verbose=True)[0]
 
-    #taking just the IP portion of this to scan well-known ports
+    #taking just the IP portion of this to scan well-known ports - needed for port scan
     for i in range(0, len(answered_list)):
         ip_only.append(answered_list[i][1].psrc)
 
