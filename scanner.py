@@ -1,8 +1,12 @@
 import scapy.all as scapy
 import argparse
+import colorama
 from scapy.layers.inet import TCP, IP
+from banner import *
+from colorama import Fore, Style, init
+#from http_probe import *
 
-
+init(autoreset=True)
 #making this variable global to prevent dropping packets when doing ARP twice
 ip_only = []
 
@@ -59,7 +63,7 @@ def scan_ports(arg_ports):
 
     #only scanning the results from the ARP scan
     for ip in ip_only:
-        print(f'----------------------\nScanning {ip}\n----------------------')
+        print(Fore.GREEN + f'----------------------\nScanning {ip}\n----------------------')
 
         #setting lists for results - only handling open for now, but saving rest for later use
         open_ports = []
@@ -93,15 +97,18 @@ def scan_ports(arg_ports):
 
 #display results for ARP
 def display_arp_result(result):
-    print("-----------------------------------\nIP Address\tMAC Address\n-----------------------------------")
+    print(Fore.GREEN + "-----------------------------------\nIP Address\tMAC Address\n-----------------------------------")
     for i in result:
         print("{}\t{}".format(i["ip"], i["mac"]))
 
 #display results for Scan
 def display_port_scan_result(ports):
-    print("-----------------------------------\n Ports \n-----------------------------------")
+    print(Fore.GREEN + "-----------------------------------\n Ports \n-----------------------------------")
     for x in ports:
         print(f"Open ports for {x}: \n {ports[x]['open']}")
+
+
+banner()
 
 #getting command line args
 options = get_args()
