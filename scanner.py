@@ -1,6 +1,5 @@
 import scapy.all as scapy
 import argparse
-import colorama
 from scapy.layers.inet import TCP, IP
 from banner import *
 from colorama import Fore, Style, init

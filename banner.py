@@ -1,5 +1,4 @@
-import colorama
-from colorama import Fore, Style
+from colorama import Fore
 
 def banner():
     font = Fore.RED + '''
