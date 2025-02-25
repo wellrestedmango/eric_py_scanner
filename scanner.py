@@ -10,6 +10,7 @@ ip_only = []
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--target', dest='target', help='Target IP Address/Addresses')
+    parser.add_argument('-p', '--ports', dest='ports', action='store_true', help='specify specific port to scan, default 1-1000')
     ip_selections = parser.parse_args()
 
     if not ip_selections.target:
@@ -32,6 +33,8 @@ def scan(ip):
     #later builds will take the whole tuple to filter out unopened ports, dropping the [0]
     answered_list = scapy.srp(broadcast_ether_arp_req_frame, timeout=1, verbose=True)[0]
 
+    print(answered_list)
+
     #taking just the IP portion of this to scan well-known ports - needed for port scan
     for i in range(0, len(answered_list)):
         ip_only.append(answered_list[i][1].psrc)
@@ -46,10 +49,10 @@ def scan(ip):
         result.append(client_dict)
     return result
 
-def scan_ports():
+def scan_ports(arg_ports):
     # setting the well-known ports as default and scanning them - will make this an arg in the future
     #take ports as an arg and parse - if else to the default range of 1001
-    ports = range(1, 1001)
+    ports = range(1, 100)
 
     #setting an empty dict for results
     ip_dict = {}
@@ -111,6 +114,8 @@ display_arp_result(scanned_output)
 #next step, take in an options.ports arg and parse to select custom port range, pass a arg to this def
 #scan_ports(options.ports)
 #can also wrap this in an if so it only runs if there is a -p flag
-scanned_ports = scan_ports()
-display_port_scan_result(scanned_ports)
+
+if options.ports:
+    scanned_ports = scan_ports(options.ports)
+    display_port_scan_result(scanned_ports)
 
