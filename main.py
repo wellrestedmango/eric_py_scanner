@@ -34,7 +34,16 @@ def display_arp_result(result):
 def display_port_scan_result(ports):
     print(Fore.GREEN + "-----------------------------------\n Ports \n-----------------------------------")
     for x in ports:
-        print(f"Open ports for {x}: \n {ports[x]['open']}")
+        print(Fore.CYAN + f"Open ports for {x}: {ports[x]['open']}")
+        for p in ports[x]['open']:
+            if p == 80:
+                print(Fore.GREEN + f"--------------------\n Probing port {p} \n--------------------")
+                try:
+                    probe(x,p)
+                except ValueError:
+                    print(Fore.YELLOW + f"URL for {x} port {p} won't resolve")
+                    pass
+
 
 
 
