@@ -1,25 +1,13 @@
 import scapy.all as scapy
-import argparse
 from scapy.layers.inet import TCP, IP
-from banner import *
-from colorama import Fore, Style, init
-#from http_probe import *
+from colorama import Fore, init
 
 init(autoreset=True)
+
+
+
 #making this variable global to prevent dropping packets when doing ARP twice
 ip_only = []
-
-#get ip from command line arguments
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--target', dest='target', help='Target IP Address/Addresses')
-    parser.add_argument('-p', '--ports', dest='ports', action='store_true', help='specify specific port to scan, default 1-1000')
-    ip_selections = parser.parse_args()
-
-    if not ip_selections.target:
-        parser.error('Please specify a target IP --help for more information')
-
-    return ip_selections
 
 #create frames and send to network
 def scan(ip):
@@ -94,34 +82,5 @@ def scan_ports(arg_ports):
         ip_dict[ip] = temp_port_dict
     return ip_dict
 
-#display results for ARP
-def display_arp_result(result):
-    print(Fore.GREEN + "-----------------------------------\nIP Address\tMAC Address\n-----------------------------------")
-    for i in result:
-        print("{}\t{}".format(i["ip"], i["mac"]))
 
-#display results for Scan
-def display_port_scan_result(ports):
-    print(Fore.GREEN + "-----------------------------------\n Ports \n-----------------------------------")
-    for x in ports:
-        print(f"Open ports for {x}: \n {ports[x]['open']}")
-
-
-banner()
-
-#getting command line args
-options = get_args()
-
-#ARP scan on target ip/ip range
-scanned_output = scan(options.target)
-display_arp_result(scanned_output)
-
-#Port scan on results from ARP scan - no args yet
-#next step, take in an options.ports arg and parse to select custom port range, pass a arg to this def
-#scan_ports(options.ports)
-#can also wrap this in an if so it only runs if there is a -p flag
-
-if options.ports:
-    scanned_ports = scan_ports(options.ports)
-    display_port_scan_result(scanned_ports)
 
