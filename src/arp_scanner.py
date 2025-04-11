@@ -40,7 +40,7 @@ def scan(ip):
         result.append(client_dict)
     return result
 
-def scan_ports(arg_ports):
+def scan_ports():
     # setting the well-known ports as default and scanning them - will make this an arg in the future
     #take ports as an arg and parse - if else to the default range of 1001
     ports = range(1, 100)

@@ -1,27 +1,15 @@
 import argparse
+import sys
+import socket
 from colorama import Fore, init
-
-
-
 from src.banner import banner
 from src.arp_scanner import scan, scan_ports
 from src.http_probe import probe
+from src.target import get_target
 
 #reset colors after line defining them
 init(autoreset=True)
 
-
-
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--target', dest='target', help='Target IP Address/Addresses')
-    parser.add_argument('-p', '--ports', dest='ports', type=int, help='specify specific port/port range to scan')
-    ip_selections = parser.parse_args()
-
-    if not ip_selections.target:
-        parser.error('Please specify a target IP --help for more information')
-
-    return ip_selections
 
 
 #display results for ARP
@@ -37,31 +25,33 @@ def display_port_scan_result(ports):
         print(Fore.CYAN + f"Open ports for {x}: {ports[x]['open']}")
         for p in ports[x]['open']:
             if p == 80:
-                print(Fore.GREEN + f"--------------------\n Probing port {p} \n--------------------")
-                try:
-                    probe(x,p)
-                except ValueError:
-                    print(Fore.YELLOW + f"URL for {x} port {p} won't resolve")
+                parsing = input(Fore.RED + "Port 80 found. Probe HTTP? Y/n:  ")
+                if parsing == "Y":
+                    print(Fore.GREEN + f"--------------------\n Probing port {p} \n--------------------")
+                    try:
+                        probe(x,p)
+                    except ValueError:
+                        print(Fore.YELLOW + f"URL for {x} port {p} won't resolve")
+                        pass
+                else:
                     pass
 
 
 
 
+
+
+#Start running the program
 banner()
 
-#getting command line args
-options = get_args()
+#Get the IP target range
+new_options = get_target()
 
 #ARP scan on target ip/ip range
-scanned_output = scan(options.target)
+scanned_output = scan(new_options)
 display_arp_result(scanned_output)
 
-#Port scan on results from ARP scan - no args yet
-#next step, take in an options.ports arg and parse to select custom port range, pass a arg to this def
-#scan_ports(options.ports)
-#can also wrap this in an if so it only runs if there is a -p flag
-
-if options.ports:
-    scanned_ports = scan_ports(options.ports)
-    display_port_scan_result(scanned_ports)
+#scan ports
+scanned_ports = scan_ports()
+display_port_scan_result(scanned_ports)
 
